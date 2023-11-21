@@ -24,7 +24,7 @@ namespace AdminPanel.Web.Services
 
         public async Task<bool> Login(LoginModel model)
         {
-            var user = await FindByName(model.Username);
+            var user = await FindByUsername(model.Username);
             if (user != null)
             {
                 return await CheckPassword(user.Passwords, model.Password);
@@ -41,7 +41,7 @@ namespace AdminPanel.Web.Services
         }
 
 
-        private async Task<User>? FindByName(string username)
+        private async Task<User>? FindByUsername(string username)
         {
             return _context.Users.FirstOrDefault(x => x.Login == username);
         }
@@ -67,8 +67,9 @@ namespace AdminPanel.Web.Services
 
         private async Task<List<Claim>> GetClaims(string username)
         {
-            var user = await FindByName(username);
+            var user = await FindByUsername(username);
 
+            
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name, username),
