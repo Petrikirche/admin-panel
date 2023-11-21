@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace AdminPanel.Web.Services
 {
@@ -41,9 +42,9 @@ namespace AdminPanel.Web.Services
         }
 
 
-        private async Task<User>? FindByUsername(string username)
+        private async Task<User?> FindByUsername(string username)
         {
-            return _context.Users.FirstOrDefault(x => x.Login == username);
+            return await _context.Users.FirstOrDefaultAsync(x => x.Login == username);
         }
 
 
@@ -57,10 +58,10 @@ namespace AdminPanel.Web.Services
         {
             var claims = await GetClaims(username);
 
-            ClaimsIdentity identity =
+            var identity =
                 new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            ClaimsPrincipal pricipal = new ClaimsPrincipal(identity);
-            await _httpContext.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, pricipal);
+            var principal = new ClaimsPrincipal(identity);
+            await _httpContext.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
         }
 
 
@@ -84,11 +85,5 @@ namespace AdminPanel.Web.Services
 
 
 
-    }
-
-    public class LoginModel
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
     }
 }
