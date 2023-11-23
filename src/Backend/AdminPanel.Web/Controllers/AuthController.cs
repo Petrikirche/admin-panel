@@ -15,24 +15,7 @@ namespace AdminPanel.Web.Controllers
         {
             _authService = authService;
         }
-
-
-        // GET: api/<AuthController>
-        [Authorize]
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<AuthController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<AuthController>
+        
         [HttpPost]
         [Produces("application/json")]
         public async Task<IActionResult> Post(LoginModel user)
@@ -48,18 +31,6 @@ namespace AdminPanel.Web.Controllers
 
             }
             return BadRequest("user not found");
-        }
-
-        // PUT api/<AuthController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<AuthController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }
