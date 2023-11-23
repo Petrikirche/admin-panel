@@ -3,6 +3,7 @@ using AdminPanel.Data;
 using AdminPanel.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 namespace AdminPanel.Web
 {
@@ -22,7 +23,7 @@ namespace AdminPanel.Web
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidDataException("Default connection not found");
 
-            builder.Services.AddDbContext<TicketsPetrekircheContext>(opts => opts.UseNpgsql(connectionString));
+            builder.Services.AddDbContext<TicketsPetrekircheContext>(opts => opts.UseNpgsql(connectionString).UseLazyLoadingProxies());
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<AuthService>();
@@ -30,9 +31,9 @@ namespace AdminPanel.Web
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
-                    options.Cookie.Name = "UserLoginCookie";
+                    options.Cookie.Name = "UserCookie";
                     options.SlidingExpiration = true;
-                    options.ExpireTimeSpan = new TimeSpan(24, 0, 0); // Expires in 1 hour
+                    options.ExpireTimeSpan = new TimeSpan(24, 0, 0); // Expires in 24 hour
                     options.Events.OnRedirectToLogin = (context) =>
                     {
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
@@ -42,6 +43,8 @@ namespace AdminPanel.Web
                     // Only use this when the sites are on different domains
                     options.Cookie.SameSite = SameSiteMode.None;
                 });
+
+
 
             var app = builder.Build();
 
@@ -63,7 +66,7 @@ namespace AdminPanel.Web
 
             app.UseCors(builder =>
             {
-                builder.WithOrigins("http://localhost:5173", "http://localhost:3000").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                builder.WithOrigins("http://localhost:5173", "http://localhost:4000").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
             });
 
             app.UseAuthentication();
